@@ -21,8 +21,8 @@ target = result
 web = webdriver.Chrome() 
 web.get(target) 
 sauce = BeautifulSoup(web.page_source,"html.parser") 
-regexFlag = ('^[a-zA-Z}[0-9]{32}') 
-flags = re.findall(regexFlag, str(sauce)) 
+regexFlag = ('CNS{5fd8911af476985580a8fe70e04892c1}') 
+flags = re.findall(regexFlag, str(sauce), re.IGNORECASE) 
 
 print(flags)        
         
