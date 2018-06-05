@@ -8,18 +8,21 @@ import re
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) #This is to remove a ssl error.
 #had help from this stack overflow post https://stackoverflow.com/questions/27981545/suppress-insecurerequestwarning-unverified-https-request-is-being-made-in-pytho
-file = open("directories.txt", "r") #Opens, reads file with directories.
-contents = file.read().split("\n") #Reads, splits everything in file by line.
-file.close()
-for item in contents: #Looks through parsed items in file.
+file = open("directories.txt", "r") 
+contents = file.read().split("\n") 
+for item in contents: 
     url = 'http://10.11.3.120/'+item+'/flag.txt'
-    r = requests.get(url, verify=False) #Checks get request on the url and appeneded path from file.
-    if r.status_code == 200: #checks if status code is 200. Prints the URL and path if the status code is 200 OK.
-        print(url)
-        target = url
-        web = webdriver.Chrome() #selenium chrome webdriver
-        web.get(target)
-        sauce = BeautifulSoup(web.page_source,"html.parser")
-        regexFlag = ('\CNS\w')
-        flags = re.findall(regexFlag, str(sauce))
-        print(flags)
+    r = requests.get(url, verify=False) 
+    if r.status_code == 200: 
+        result = url
+        print(result)
+        
+target = result
+web = webdriver.Chrome() 
+web.get(target) 
+sauce = BeautifulSoup(web.page_source,"html.parser") 
+regexFlag = ('^[a-zA-Z}[0-9]{32}') 
+flags = re.findall(regexFlag, str(sauce)) 
+
+print(flags)        
+        
