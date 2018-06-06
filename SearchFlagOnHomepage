@@ -1,0 +1,19 @@
+import requests
+import urllib3
+import urllib.parse
+from bs4 import BeautifulSoup
+from selenium import webdriver
+import re
+
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) #This is to remove a ssl error.
+#had help from this stack overflow post https://stackoverflow.com/questions/27981545/suppress-insecurerequestwarning-unverified-https-request-is-being-made-in-pytho
+
+target = 'http://10.11.3.120/index.php'
+web = webdriver.Chrome() 
+web.get(target) 
+sauce = BeautifulSoup(web.page_source,"html.parser") 
+regexFlag = 'CNS\W\w{2,}\W'
+flags = re.findall(regexFlag, str(sauce), re.IGNORECASE) 
+
+print(flags)   
